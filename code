@@ -1,0 +1,57 @@
+import matplotlib.pyplot as plt
+from fpdf import FPDF
+
+# Step 1: Sample Data with Indian Names
+data = [
+    {"Name": "Aarav", "Score": 85},
+    {"Name": "Priya", "Score": 92},
+    {"Name": "Rohan", "Score": 78},
+    {"Name": "Sneha", "Score": 90},
+    {"Name": "Karan", "Score": 88}
+]
+
+# Step 2: Data Analysis
+scores = [d["Score"] for d in data]
+names = [d["Name"] for d in data]   
+average = sum(scores) / len(scores)
+highest = max(data, key=lambda x: x["Score"])
+lowest = min(data, key=lambda x: x["Score"])
+
+# Step 3: Create a Bar Chart
+plt.figure(figsize=(8, 4))
+plt.bar(names, scores, color='skyblue')
+plt.title("Student Scores")
+plt.xlabel("Student")
+plt.ylabel("Score")
+plt.ylim(0, 100)
+plt.tight_layout()
+plt.savefig("bar_chart.png")
+plt.close()
+
+# Step 4: Generate PDF Report
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font("Arial", 'B', 16)
+pdf.cell(200, 10, "Student Score Report", ln=True, align='C')
+
+pdf.set_font("Arial", size=12)
+pdf.ln(10)
+pdf.cell(200, 10, "Scores:", ln=True)
+
+for row in data:
+    pdf.cell(200, 10, f"{row['Name']}: {row['Score']}", ln=True)
+
+pdf.ln(5)
+pdf.set_font("Arial", 'B', 12)
+pdf.cell(200, 10, "Analysis:", ln=True)
+pdf.set_font("Arial", size=12)
+pdf.cell(200, 10, f"Average Score: {average:.2f}", ln=True)
+pdf.cell(200, 10, f"Highest Score: {highest['Name']} ({highest['Score']})", ln=True)
+pdf.cell(200, 10, f"Lowest Score: {lowest['Name']} ({lowest['Score']})", ln=True)
+
+pdf.ln(10)
+pdf.image("bar_chart.png", x=15, w=180)
+
+pdf.output("final_report.pdf")
+
+print("✅ Report generated: final_report.pdf")
